@@ -105,7 +105,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: e0511a4867fed884face8c201d4a8b4e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1.1, y: 1.45}
@@ -128,9 +128,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hp: 100
   speed: 4
+  speedX_max: 5
+  speedY_max: 5
   jumpForce: 15
+  Keys: 0
+  FaceRight: 1
   CheckPoint: {fileID: 0}
+  groundChecker: {fileID: 0}
   bullet: {fileID: 3707385621596452764, guid: cb56be0890aadbf43ad46e1bf4abf855, type: 3}
+  mine: {fileID: 3703180617438448521, guid: ef4f6924c303699439be1fc757779000, type: 3}
   bullet_spawn: {fileID: 991137134399320247}
 --- !u!61 &991137134547868903
 BoxCollider2D:

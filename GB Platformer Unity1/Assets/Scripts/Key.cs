@@ -16,6 +16,9 @@ public class Key : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// Уничтожение объекта
+    /// </summary>
     public void Death()
     {
         Destroy(gameObject);
