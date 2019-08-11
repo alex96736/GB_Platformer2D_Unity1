@@ -22,6 +22,7 @@ public class CheckPoint : MonoBehaviour
     }
 
     void OnTriggerEnter2D(Collider2D collision){
+    // проверка активации игроком чекпоинта
     if (collision.gameObject.layer == PlayerLayer) {
       checkpointSpriteRenderer.sprite = TrueCheckPoint;
       IsCheck = true;
