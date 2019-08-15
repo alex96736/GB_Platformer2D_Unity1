@@ -11,6 +11,7 @@ public class BulletPlayer : MonoBehaviour
     private int CheckPointLayer = 14;
     private int GroundLayer = 10;
     private int BulletsLayer = 16;
+    private int FinalDoorLayer = 15;
     private int EnemyGroundLayer = 11;
     public float damage = 10;
     [SerializeField] private float speedX_max = 5;
@@ -18,6 +19,9 @@ public class BulletPlayer : MonoBehaviour
 
     private Boolean FaceRight = true;
     private GameObject player;
+    private AudioSource SoundPlayer;
+
+    [SerializeField] private AudioClip HitSound;
 
     // Start is called before the first frame update
     void Start()
@@ -26,6 +30,7 @@ public class BulletPlayer : MonoBehaviour
         PlayerRigidbody.constraints = RigidbodyConstraints2D.FreezePositionY;
         player = GameObject.Find("Player_Snowman");
         FaceRight = player.GetComponent<Player>().FaceRight;
+        SoundPlayer = gameObject.GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -52,18 +57,21 @@ public class BulletPlayer : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+     private void OnTriggerEnter2D(Collider2D collision)
     {
     // проверка столкновения пули с другими объектами
-      if (collision.gameObject.layer != PlayerLayer && collision.gameObject.layer != CheckPointLayer && collision.gameObject.layer != BulletsLayer)
+      if (collision.gameObject.layer != PlayerLayer && collision.gameObject.layer != CheckPointLayer && collision.gameObject.layer != BulletsLayer && collision.gameObject.layer != FinalDoorLayer)
       {
+        PlayerRigidbody.constraints = RigidbodyConstraints2D.FreezePosition;
+        SoundPlayer.PlayOneShot(HitSound, 0.5f);
         if (collision.gameObject.layer == EnemyLayer)
         {
             collision.gameObject.GetComponent<Enemy>().TakeDamage(damage);
         }
+        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        if(SoundPlayer.isPlaying == false){
         Debug.Log ("Destroy snowball");
-        Destroy(gameObject);
+        Destroy(gameObject);}
       }
     }
-
 }

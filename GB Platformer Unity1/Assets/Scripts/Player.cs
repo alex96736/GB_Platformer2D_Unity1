@@ -27,13 +27,17 @@ public class Player : MonoBehaviour
     [SerializeField] GameObject bullet;
     [SerializeField] GameObject mine;
     [SerializeField] Transform bullet_spawn;
+
+    [SerializeField] private AudioClip KeySound;
+    [SerializeField] private AudioClip ShootSound;
+    [SerializeField] private AudioClip JumpSound;
+    [SerializeField] private AudioClip DeathSound;
     
     // Start is called before the first frame update
     void Start()
     {
         PlayerRigidbody = GetComponent<Rigidbody2D>();
         PlayerRigidbody.freezeRotation = true;
-        
     }
 
     /// <summary>
@@ -83,10 +87,6 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(1))
         {
 			Jump();
-            if (PlayerRigidbody.velocity.y > speedY_max)
-            {
-                PlayerRigidbody.velocity = new Vector2(PlayerRigidbody.velocity.x, speedY_max);
-            }
         }
 
         // СКМ или Е, заложить мину
@@ -108,6 +108,8 @@ public class Player : MonoBehaviour
     {
         if (CheckGround())
         {
+            gameObject.GetComponent<AudioSource>().PlayOneShot(JumpSound, 0.3f);
+            PlayerRigidbody.velocity = new Vector2(PlayerRigidbody.velocity.x, 0);
             PlayerRigidbody.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
         }
     }
@@ -142,6 +144,7 @@ public class Player : MonoBehaviour
     /// </summary>
     void Shoot()
     {
+        gameObject.GetComponent<AudioSource>().PlayOneShot(ShootSound, 0.5f);
         var newBullet = GameObject.Instantiate(bullet, bullet_spawn.position, Quaternion.identity);
         Debug.Log($"Player shoot");
         Destroy(newBullet, 2);
@@ -156,7 +159,9 @@ public class Player : MonoBehaviour
         Debug.Log($"Player take damage {damage}, hp = {hp}");
         if (hp<=0) 
         {
-            Death();
+            gameObject.GetComponent<AudioSource>().PlayOneShot(DeathSound);
+            PlayerRigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
+            Invoke("Death", 1);
             Debug.Log($"Player death");
         }
     }
@@ -176,9 +181,10 @@ public class Player : MonoBehaviour
         // проверка взаимодействия с ключами
         if (collision.gameObject.layer == LootLayer)
         {
-            collision.gameObject.GetComponent<Key>().Death();
+            gameObject.GetComponent<AudioSource>().PlayOneShot(KeySound);
             Debug.Log("Player take key");
             Keys++;
+            collision.gameObject.GetComponent<Key>().Death();
         }
         // проверка взаимодействия с чекпоинтами
         if (collision.gameObject.layer == CheckPointLayer)
@@ -196,13 +202,14 @@ public class Player : MonoBehaviour
         // проверка последнего чекпоинта
         if (CheckPoint != null)
         {
+            PlayerRigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
             gameObject.transform.position = CheckPoint.position;
             PlayerRigidbody.velocity = Vector2.zero;
             hp = 100;
         } 
         else 
         {
-            Destroy(gameObject,2);
+            Destroy(gameObject);
         }
 
     }

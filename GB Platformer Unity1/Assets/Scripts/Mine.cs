@@ -13,9 +13,12 @@ public class Mine : MonoBehaviour
     [SerializeField] private float damage = 50;
     [SerializeField] private bool activated = false;
     private SpriteRenderer MineSpriteRenderer;
+    private AudioSource SoundPlayer;
+    [SerializeField] private AudioClip ExplosionSound;
     // Start is called before the first frame update
     void Start()
     {
+        SoundPlayer = gameObject.GetComponent<AudioSource>();
         MineSpriteRenderer = GetComponent<SpriteRenderer>();
         if (activated == true)
         {
@@ -46,7 +49,8 @@ public class Mine : MonoBehaviour
              {
                 activated = false;
                 Hit();
-                GameObject.Destroy(gameObject);
+                GetComponent<SpriteRenderer>().enabled = false;
+                Destroy(gameObject, 1);
              }
         }
     }
@@ -61,6 +65,7 @@ public class Mine : MonoBehaviour
         {
             if (collision.gameObject.layer == PlayerLayer || collision.gameObject.layer == EnemyLayer)
             {
+                SoundPlayer.PlayOneShot(ExplosionSound, 0.4f);
                 collision.gameObject.GetComponent<Rigidbody2D>().AddForce((collision.gameObject.transform.position - gameObject.transform.position)*power);
                 if(collision.gameObject.layer == PlayerLayer)
                 {
