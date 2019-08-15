@@ -11,11 +11,16 @@ public class FinalDoor : MonoBehaviour
     public bool ButtonPressed = false;
     private int PlayerLayer = 12;
     private SpriteRenderer DoorSpriteRenderer;
+    private AudioSource SoundPlayer;
+
+    [SerializeField] private AudioClip LockDoorSound;
+    [SerializeField] private AudioClip OpenDoorSound;
 
     void Start()
     {
-        DoorSpriteRenderer = GetComponent<SpriteRenderer> ();
-        DoorSpriteRenderer.sprite = CloseDoor2;
+      SoundPlayer = gameObject.GetComponent<AudioSource>();
+      DoorSpriteRenderer = GetComponent<SpriteRenderer> ();
+      DoorSpriteRenderer.sprite = CloseDoor2;
     }
 
     void Update()
@@ -29,7 +34,15 @@ public class FinalDoor : MonoBehaviour
       if (collision.gameObject.GetComponent<Player>().Keys == 3 && ButtonPressed == true)
       {
         DoorSpriteRenderer.sprite = OpenDoor;
+        if(OpenCheck == false)
+        {
+          SoundPlayer.PlayOneShot(OpenDoorSound);
+        }
         OpenCheck = true;
+      }
+      else
+      {
+        SoundPlayer.PlayOneShot(LockDoorSound);
       }
     }
   }

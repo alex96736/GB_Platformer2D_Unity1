@@ -8,13 +8,17 @@ public class Button : MonoBehaviour
     [SerializeField] private Sprite Button_Pressed;
     
     [SerializeField] private GameObject FinalDoor;
+    [SerializeField] private AudioClip OpenDoorSound;
     private int BoxLayer = 17;
     private SpriteRenderer ButtonSpriteRenderer;
+
+    private AudioSource SoundPlayer;
 
     void Start()
     {
         ButtonSpriteRenderer = GetComponent<SpriteRenderer> ();
         ButtonSpriteRenderer.sprite = Button_NotPressed;
+        SoundPlayer = gameObject.GetComponent<AudioSource>();
     }
 
     void Update()
@@ -28,6 +32,7 @@ public class Button : MonoBehaviour
           ButtonSpriteRenderer.sprite = Button_Pressed;
           FinalDoor.GetComponent<SpriteRenderer>().sprite = FinalDoor.GetComponent<FinalDoor>().CloseDoor;
           FinalDoor.GetComponent<FinalDoor>().ButtonPressed = true;
+          SoundPlayer.PlayOneShot(OpenDoorSound, 0.3f);
         }
     }
      void OnTriggerExit2D(Collider2D collision){
@@ -36,6 +41,7 @@ public class Button : MonoBehaviour
           ButtonSpriteRenderer.sprite = Button_NotPressed;
           FinalDoor.GetComponent<SpriteRenderer>().sprite = FinalDoor.GetComponent<FinalDoor>().CloseDoor2;
           FinalDoor.GetComponent<FinalDoor>().ButtonPressed = false;
+          SoundPlayer.PlayOneShot(OpenDoorSound, 0.3f);
         }
     }
 }

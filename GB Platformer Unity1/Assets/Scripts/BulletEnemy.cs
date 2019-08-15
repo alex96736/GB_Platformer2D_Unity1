@@ -9,6 +9,7 @@ public class BulletEnemy : MonoBehaviour
     private int EnemyLayer = 12;
     private int PlayerLayer = 9;
     private int CheckPointLayer = 14;
+    private int FinalDoorLayer = 15;
     private int GroundLayer = 10;
     private int BulletsLayer = 16;
     private int EnemyGroundLayer = 11;
@@ -16,16 +17,18 @@ public class BulletEnemy : MonoBehaviour
     [SerializeField] private float speedX_max = 5;
     private Rigidbody2D PlayerRigidbody;
 
-    private Boolean FaceRight = true;
-    private GameObject player;
+    public Boolean FaceRight = false;
+
+    private AudioSource SoundPlayer;
+
+    [SerializeField] private AudioClip HitSound;
 
     // Start is called before the first frame update
     void Start()
     {
+        SoundPlayer = gameObject.GetComponent<AudioSource>();
         PlayerRigidbody = GetComponent<Rigidbody2D>();
         PlayerRigidbody.constraints = RigidbodyConstraints2D.FreezePositionY;
-        player = GameObject.Find("Player_Snowman");
-        FaceRight = player.GetComponent<Player>().FaceRight;
     }
 
     // Update is called once per frame
@@ -52,17 +55,21 @@ public class BulletEnemy : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
     // проверка столкновения пули с другими объектами
-      if (collision.gameObject.layer != PlayerLayer && collision.gameObject.layer != CheckPointLayer && collision.gameObject.layer != BulletsLayer)
+      if (collision.gameObject.layer != PlayerLayer && collision.gameObject.layer != CheckPointLayer && collision.gameObject.layer != BulletsLayer && collision.gameObject.layer != FinalDoorLayer)
       {
+        PlayerRigidbody.constraints = RigidbodyConstraints2D.FreezePosition;
+        SoundPlayer.PlayOneShot(HitSound, 0.5f);
         if (collision.gameObject.layer == EnemyLayer)
         {
             collision.gameObject.GetComponent<Player>().TakeDamage(damage);
         }
+        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        if(SoundPlayer.isPlaying == false){
         Debug.Log ("Destroy snowball");
-        Destroy(gameObject);
+        Destroy(gameObject);}
       }
     }
 
